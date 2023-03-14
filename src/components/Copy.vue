@@ -3,7 +3,7 @@ import { Copy, Loading, CheckOne } from "@icon-park/vue-next";
 import type { Theme } from "@icon-park/vue-next/lib/runtime";
 import { ref } from "vue";
 
-const porps = defineProps<{ content: string }>();
+const props = defineProps<{ content: string }>();
 const btnConfig: {
   size: number;
   fill: string;
@@ -21,7 +21,7 @@ const btnTips = {
 };
 const btnStatus = ref<"copy" | "loading" | "success" | "error">("copy");
 
-const copyToClipboard = (content: string = porps.content) => {
+const copyToClipboard = (content: string = props.content) => {
   btnStatus.value = "loading";
   navigator.clipboard
     .writeText(content)

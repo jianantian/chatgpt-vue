@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ChatMessage } from "@/types";
 import { ref, watch, nextTick, onMounted } from "vue";
-import { chat } from "@/libs/gpt";
+import { chat } from "@/libs/gpt_bridge";
 import cryptoJS from "crypto-js";
-import Loding from "@/components/Loding.vue";
+import Loading from "@/components/Loading.vue";
 import Copy from "@/components/Copy.vue";
 
 let apiKey = "";
@@ -12,23 +12,23 @@ let isTalking = ref(false);
 let messageContent = ref("");
 const chatListDom = ref<HTMLDivElement>();
 const decoder = new TextDecoder("utf-8");
-const roleAlias = { user: "ME", assistant: "ChatGPT", system: "System" };
+const roleAlias = { user: "ME", assistant: "Multivac", system: "System" };
 const messageList = ref<ChatMessage[]>([
   {
     role: "system",
-    content: "你是 ChatGPT，OpenAI 训练的大型语言模型，尽可能简洁地回答。",
+    content: "你是经过大量数据训练的大型语言模型, 尽可能简洁地回答.",
   },
   {
     role: "assistant",
-    content: `你好，我是AI语言模型，我可以提供一些常用服务和信息，例如：
+    content: `你好, 我是 AI 语言模型, 我可以提供一些常用服务和信息, 例如:
 
-1. 翻译：我可以把中文翻译成英文，英文翻译成中文，还有其他一些语言翻译，比如法语、日语、西班牙语等。
+1. 翻译: 我可以把中文翻译成英文, 英文翻译成中文, 还有其他一些语言翻译, 比如法语、日语、西班牙语等.
 
-2. 咨询服务：如果你有任何问题需要咨询，例如健康、法律、投资等方面，我可以尽可能为你提供帮助。
+2. 咨询服务: 如果你有任何问题需要咨询, 例如健康、法律、投资等方面, 我可以尽可能为你提供帮助.
 
-3. 闲聊：如果你感到寂寞或无聊，我们可以聊一些有趣的话题，以减轻你的压力。
+3. 闲聊: 如果你感到寂寞或无聊, 我们可以聊一些有趣的话题, 以减轻你的压力.
 
-请告诉我你需要哪方面的帮助，我会根据你的需求给你提供相应的信息和建议。`,
+请告诉我你需要哪方面的帮助，我会根据你的需求给你提供相应的信息和建议.`,
   },
 ]);
 
@@ -76,7 +76,7 @@ const readStream = async (
     const json = JSON.parse(v);
     console.log(json);
     const content =
-      status === 200 ? json.choices[0].delta.content ?? "" : json.error.message;
+      status === 200 ? json.choices[0].message.content : json.error.message;
     appendLastMessageContent(content);
   });
   await readStream(reader, status);
@@ -106,13 +106,9 @@ const clickConfig = () => {
   switchConfigStatus();
 };
 
-const getSecretKey = () => "lianginx";
+const getSecretKey = () => "multivac";
 
 const saveAPIKey = (apiKey: string) => {
-  if (apiKey.slice(0, 3) !== "sk-" || apiKey.length !== 51) {
-    alert("API Key 错误，请检查后重新输入！");
-    return false;
-  }
   const aesAPIKey = cryptoJS.AES.encrypt(apiKey, getSecretKey()).toString();
   localStorage.setItem("apiKey", aesAPIKey);
   return true;
@@ -144,9 +140,9 @@ watch(messageList.value, () => nextTick(() => scrollToBottom()));
     <div
       class="flex flex-nowrap fixed w-full items-baseline top-0 px-6 py-4 bg-gray-100"
     >
-      <div class="text-2xl font-bold">ChatGPT</div>
+      <div class="text-2xl font-bold">Multivac</div>
       <div class="ml-4 text-sm text-gray-500">
-        基于 OpenAI 的 ChatGPT 自然语言模型人工智能对话
+        自然语言模型人工智能对话
       </div>
       <div
         class="ml-auto px-3 py-2 text-sm cursor-pointer hover:bg-white rounded-md"
@@ -162,7 +158,7 @@ watch(messageList.value, () => nextTick(() => scrollToBottom()));
         v-for="item of messageList.filter((v) => v.role !== 'system')"
       >
         <div class="flex justify-between items-center mb-2">
-          <div class="font-bold">{{ roleAlias[item.role] }}：</div>
+          <div class="font-bold">{{ roleAlias[item.role] }}: </div>
           <Copy class="invisible group-hover:visible" :content="item.content" />
         </div>
         <div>
@@ -171,14 +167,14 @@ watch(messageList.value, () => nextTick(() => scrollToBottom()));
             v-if="item.content"
             >{{ item.content.replace(/^\n\n/, "") }}</pre
           >
-          <Loding v-else />
+          <Loading v-else />
         </div>
       </div>
     </div>
 
     <div class="sticky bottom-0 w-full p-6 pb-8 bg-gray-100">
       <div class="-mt-2 mb-2 text-sm text-gray-500" v-if="isConfig">
-        请输入 API Key：
+        请输入 API Key:
       </div>
       <div class="flex">
         <input

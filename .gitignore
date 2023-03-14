@@ -1,5 +1,8 @@
 .DS_Store
 .env
+.vscode
+.idea
+src/config
 node_modules
 package-lock.json
 dist

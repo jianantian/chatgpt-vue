@@ -1,16 +1,17 @@
 <script setup lang="ts"></script>
 
 <template>
-  <Suspense>
-    <keep-alive include="home">
-      <RouterView />
-    </keep-alive>
-  </Suspense>
+  <!-- <Suspense>
+    <RouterView />
+  </Suspense> -->
+
+  <keep-alive include="home">
+    <RouterView />
+  </keep-alive>
 </template>
 
-<!--
-<keep-alive include="home">
-    <router-view/>
+<!-- <keep-alive include="home">
+    <RouterView />
  </keep-alive> -->
 
 <style></style>

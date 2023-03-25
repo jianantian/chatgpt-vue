@@ -5,6 +5,7 @@ import { chat } from "@/libs/gpt_bridge";
 import cryptoJS from "crypto-js";
 import Loading from "@/components/Loading.vue";
 import Copy from "@/components/Copy.vue";
+import { Cones } from "@icon-park/vue-next";
 
 let apiKey = "";
 let isConfig = ref(true);
@@ -75,8 +76,9 @@ const readStream = async (
   dataList?.forEach((v: any) => {
     const json = JSON.parse(v);
     console.log(json);
-    const content =
-      status === 200 ? json.choices[0].message.content : json.error.message;
+    let content = status === 200 ? json.choices[0].delta.content: json.error.message;
+    content =
+      (content === undefined) ? "": content;
     appendLastMessageContent(content);
   });
   await readStream(reader, status);
